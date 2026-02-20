@@ -1,0 +1,6 @@
+datasets:
+  - name: hprc_v2_0_mc_grch38
+    enabled: true
+    builder: gfa
+    urls:
+      - https://human-pangenomics.s3.amazonaws.com/pangenomes/freeze/release2/minigraph-cactus/hprc-v2.0-mc-grch38.gfa.gz
