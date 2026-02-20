@@ -24,7 +24,9 @@ def wildcard_format(str, wildcards):
 
 # Load config
 with open("config/datasets.yml", "r") as f:
-    datasets = yaml.safe_load(f)["datasets"]
+    DATASET_LIST = yaml.safe_load(f)["datasets"]
+    DATASETS = { dataset["name"]: dataset for dataset in DATASET_LIST if dataset["enabled"] }
+
 
 # Data paths
 BASEDIR = os.getcwd()
@@ -33,8 +35,120 @@ if "datadir" in config:
 print(f"BASEDIR = {BASEDIR}")
 
 DATADIR = os.path.join(BASEDIR, "data")
+ANCIENTDIR = os.path.join(BASEDIR, "ancient")
+TEMPDIR = os.path.join(BASEDIR, "temp")
 
+################
+### DATASETS ###
+################
+
+wildcard_constraints:
+    dataset = "[^/]+",
+    builder = "[^/]+",
+
+DATASET = os.path.join(DATADIR, "{dataset}.gfa.gz")
+ANCIENT_DATASET = os.path.join(ANCIENTDIR, "{dataset}.gfa.gz")
+TEMPORARY_DATASET_DIR = os.path.join(TEMPDIR, "datasets", "{dataset}")
+TEMPORARY_DATASET = os.path.join(TEMPORARY_DATASET_DIR, "dataset.gfa.gz")
+
+DATASET_BUILDER_DIR = os.path.join(TEMPORARY_DATASET_DIR, "{builder}")
+FINISHED_DATASET = os.path.join(DATASET_BUILDER_DIR, "dataset.gfa.gz")
 
 localrules: create_all_datasets
 rule create_all_datasets:
-    input:  
+    input:  lambda wildcards: [DATASET.format(dataset=dataset) for dataset in DATASETS.keys()],
+
+rule link_ancient_dataset:
+    input:  dataset = ancient(ANCIENT_DATASET),
+    output: dataset = DATASET,
+    shell: """
+        ln -sr '{input.dataset}' '{output.dataset}'
+    """
+
+rule finalize_dataset:
+    input:  dataset = TEMPORARY_DATASET,
+    output: dataset = ANCIENT_DATASET,
+    params: temporary_dir = TEMPORARY_DATASET_DIR,
+    shell: """
+        cp '{input.dataset}' '{output.dataset}'
+        rm -rf '{params.temporary_dir}'
+    """
+
+def choose_dataset_builder_fn(wildcards):
+    try:
+        if wildcards.dataset not in DATASETS:
+            raise ValueError(f"No enabled dataset found with name {wildcards.dataset}")
+        
+        return safe_format(FINISHED_DATASET, builder=DATASETS[wildcards.dataset]["builder"])
+    except Exception as e:
+        print(f"Error in choose_dataset_builder_fn for dataset {wildcards.dataset}: {e}")
+        traceback.print_exc()
+        raise
+
+rule choose_dataset_builder:
+    input:  dataset = choose_dataset_builder_fn, # populates FINISHED_DATASET
+    output: dataset = TEMPORARY_DATASET,
+    shell: """
+        ln -sr '{input.dataset}' '{output.dataset}'
+    """
+
+###########
+### GFA ###
+###########
+
+rule download_gfa_gz_file:
+    output: dataset = FINISHED_DATASET,
+    params: url = lambda wildcards: DATASETS[wildcards.dataset]["urls"][0],
+    wildcard_constraints:
+        builder = "gfa_gz",
+    shell: """
+        wget --progress=dot:mega -O '{output.dataset}' '{params.url}'
+    """
+
+##########
+### VG ###
+##########
+
+VG_FILE = os.path.join(TEMPORARY_DATASET_DIR, "dataset.vg")
+
+rule convert_vg_to_gfa:
+    input: dataset = VG_FILE,
+    output: dataset = FINISHED_DATASET,
+    wildcard_constraints:
+        builder = "vg",
+    shell: """
+        vg convert -g '{input.dataset}' > '{output.dataset}'
+    """
+
+rule download_vg_file:
+    output: dataset = FINISHED_DATASET,
+    params: url = lambda wildcards: DATASETS[wildcards.dataset]["urls"][0],
+    wildcard_constraints:
+        builder = "vg",
+    shell: """
+        wget --progress=dot:mega -O '{output.dataset}' '{params.url}'
+    """
+
+###########
+### GBZ ###
+###########
+
+GBZ_FILE = os.path.join(TEMPORARY_DATASET_DIR, "dataset.gbz")
+
+rule convert_gbz_to_gfa:
+    input: dataset = GBZ_FILE,
+    output: dataset = FINISHED_DATASET,
+    wildcard_constraints:
+        builder = "gbz",
+    shell: """
+        vg convert -g '{input.dataset}' > '{output.dataset}'
+    """
+
+rule download_gbz_file:
+    output: dataset = GBZ_FILE,
+    params: url = lambda wildcards: DATASETS[wildcards.dataset]["urls"][0],
+    wildcard_constraints:
+        builder = "gbz",
+    shell: """
+        wget --progress=dot:mega -O '{output.dataset}' '{params.url}'
+    """

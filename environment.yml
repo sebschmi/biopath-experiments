@@ -5,3 +5,5 @@ channels:
 dependencies:
   - python = 3.13
   - snakemake = 9
+  - wget
+  - vg
