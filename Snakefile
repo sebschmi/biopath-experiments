@@ -25,7 +25,7 @@ def wildcard_format(str, wildcards):
 # Load config
 with open("config/datasets.yml", "r") as f:
     DATASET_LIST = yaml.safe_load(f)["datasets"]
-    DATASETS = { dataset["name"]: dataset for dataset in DATASET_LIST if dataset["enabled"] }
+    DATASETS = { dataset["name"]: dataset for dataset in DATASET_LIST if dataset["enabled"] and dataset["builder"] in ["gfa_gz", "vg", "gbz"] }
 
 
 # Data paths
@@ -109,19 +109,20 @@ rule download_gfa_gz_file:
 ### VG ###
 ##########
 
-VG_FILE = os.path.join(TEMPORARY_DATASET_DIR, "dataset.vg")
+VG_FILE = os.path.join(DATASET_BUILDER_DIR, "dataset.vg")
 
 rule convert_vg_to_gfa:
     input: dataset = VG_FILE,
     output: dataset = FINISHED_DATASET,
+    log: os.path.join(DATASET_BUILDER_DIR, "convert_vg_to_gfa.log"),
     wildcard_constraints:
         builder = "vg",
     shell: """
-        vg convert -g '{input.dataset}' > '{output.dataset}'
+        vg convert -f '{input.dataset}' | gzip > '{output.dataset}' 2> '{log}'
     """
 
 rule download_vg_file:
-    output: dataset = FINISHED_DATASET,
+    output: dataset = VG_FILE,
     params: url = lambda wildcards: DATASETS[wildcards.dataset]["urls"][0],
     wildcard_constraints:
         builder = "vg",
@@ -133,15 +134,16 @@ rule download_vg_file:
 ### GBZ ###
 ###########
 
-GBZ_FILE = os.path.join(TEMPORARY_DATASET_DIR, "dataset.gbz")
+GBZ_FILE = os.path.join(DATASET_BUILDER_DIR, "dataset.gbz")
 
 rule convert_gbz_to_gfa:
     input: dataset = GBZ_FILE,
     output: dataset = FINISHED_DATASET,
+    log: os.path.join(DATASET_BUILDER_DIR, "convert_gbz_to_gfa.log"),
     wildcard_constraints:
         builder = "gbz",
     shell: """
-        vg convert -g '{input.dataset}' > '{output.dataset}'
+        vg convert -f '{input.dataset}' | gzip > '{output.dataset}' 2> '{log}'
     """
 
 rule download_gbz_file:
