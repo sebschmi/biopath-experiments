@@ -23,7 +23,7 @@ def wildcard_format(str, wildcards):
     return str.format(**dict(wildcards.items()))
 
 # Load config
-with open("config/config.yml", "r") as f:
+with open("config/datasets.yml", "r") as f:
     datasets = yaml.safe_load(f)["datasets"]
 
 # Data paths

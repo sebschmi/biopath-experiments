@@ -1,2 +1,4 @@
 software-deployment-method: "conda"
-datadir: "data"
+cores: 16
+config:
+  datadir: "data"
