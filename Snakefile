@@ -309,7 +309,7 @@ rule download_vcf_gz_file:
         wget --progress=dot:mega -O '{output.vcf_gz}' '{params.url}'
     """
 
-rule download_fasta_gz_file:
+rule download_vcf_fasta_gz_file:
     output: fasta_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz"),
     params: url = lambda wildcards: DATASETS[wildcards.dataset]["urls"]["fa_gz"],
     wildcard_constraints:
