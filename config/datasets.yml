@@ -24,14 +24,14 @@ datasets:
     enabled: true
     builder: gfa_zst
     urls:
-      url: https://zenodo.org/records/7937947/files/ecoli50.gfa.zst?download=1
+      - https://zenodo.org/records/7937947/files/ecoli50.gfa.zst?download=1
 
 
   - name: primates_chr6
     enabled: true
     builder: gfa_zst
     urls:
-      url: 'https://zenodo.org/records/7937947/files/primates14.chr6.fa.gz.667b9b6.c2fac19.ee137be.smooth.final.gfa.zst?download=1'
+      - 'https://zenodo.org/records/7937947/files/primates14.chr6.fa.gz.667b9b6.c2fac19.ee137be.smooth.final.gfa.zst?download=1'
 
   # ---------------------------------------------------------------------------
   # pggb pangenome graphs from Zenodo .fa.gz
