@@ -14,8 +14,8 @@ TEMPORARY_DATASET = os.path.join(TEMPORARY_DATASET_DIR, "dataset.gfa.gz")
 DATASET_BUILDER_DIR = os.path.join(TEMPORARY_DATASET_DIR, "{builder}")
 FINISHED_DATASET = os.path.join(DATASET_BUILDER_DIR, "dataset.gfa.gz")
 
-localrules: create_all_datasets
-rule create_all_datasets:
+localrules: all_datasets
+rule all_datasets:
     input:  lambda wildcards: [DATASET.format(dataset=dataset) for dataset in DATASETS.keys()],
 
 rule link_ancient_dataset:

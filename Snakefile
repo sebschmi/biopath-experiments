@@ -40,6 +40,9 @@ SOFTWAREDIR = os.path.join(BASEDIR, "software")
 DATADIR = os.path.join(BASEDIR, "data")
 ANCIENTDIR = os.path.join(BASEDIR, "ancient")
 TEMPDIR = os.path.join(BASEDIR, "temp")
+STATISTICSDIR = os.path.join(BASEDIR, "statistics")
 
 include: "modules/datasets.smk"
 include: "modules/software.smk"
+include: "modules/spqr.smk"
+include: "modules/statistics.smk"

@@ -2,4 +2,7 @@ software:
   biopath:
     repo: https://github.com/sebschmi/biopath
     version: 0fecca44c0dfc2996fd47df4f95631ae18527e40
-    compiler: rust
+
+  BubbleFinder:
+    repo: https://github.com/algbio/BubbleFinder
+    version: eb1eef54d5b7e2f80caf9df7c1464a4817e95241

@@ -1,0 +1,21 @@
+##################
+### STATISTICS ###
+##################
+
+DATASET_STATISTICS_JSON = os.path.join(STATISTICSDIR, "{dataset}", "statistics.json")
+DATASET_STATISTICS_TOML = os.path.join(STATISTICSDIR, "{dataset}", "statistics.toml")
+
+rule all_statistics:
+    input:  lambda wildcards: [DATASET_STATISTICS_JSON.format(dataset=dataset) for dataset in DATASETS.keys()],
+
+rule biopath_statistics:
+    input:
+        dataset = DATASET,
+        spqr_tree = SPQR_TREE,
+        biopath = BIOPATH_BINARY,
+    output:
+        statistics_json = DATASET_STATISTICS_JSON,
+        statistics_toml = DATASET_STATISTICS_TOML,
+    shell: """
+        '{input.biopath}' statistics --word-size 64 --graph-gfa-in '{input.dataset}' --spqr-in '{input.spqr_tree}' --statistics-json-out '{output.statistics_json}' --statistics-toml-out '{output.statistics_toml}'
+    """
