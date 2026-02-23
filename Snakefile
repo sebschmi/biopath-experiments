@@ -265,9 +265,9 @@ rule convert_vcf_vg_to_gfa:
 
 rule vg_construct:
     input:
-        fasta_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz"),
-        vcf_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.bgzf"),
-        vcf_tbi = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.bgzf.tbi"),
+        fasta = os.path.join(DATASET_BUILDER_DIR, "dataset.fa"),
+        vcf_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.gz"),
+        vcf_tbi = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.gz.tbi"),
     output: dataset = os.path.join(DATASET_BUILDER_DIR, "dataset.vg"),
     log: os.path.join(DATASET_BUILDER_DIR, "vg_construct.log"),
     params:
@@ -277,12 +277,12 @@ rule vg_construct:
     wildcard_constraints:
         builder = "vg_from_vcf",
     shell: """
-        vg construct -t {threads} -r '{input.fasta_gz}' -v '{input.vcf_gz}' -R {params.region} -m {params.max_node_length} > '{output.dataset}' 2> '{log}'
+        vg construct -t {threads} -r '{input.fasta}' -v '{input.vcf_gz}' -R {params.region} -m {params.max_node_length} > '{output.dataset}' 2> '{log}'
     """
 
 rule tabix_index_vcf:
-    input: vcf_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.bgzf"),
-    output: tbi = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.bgzf.tbi"),
+    input: vcf_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.gz"),
+    output: tbi = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.gz.tbi"),
     log: os.path.join(DATASET_BUILDER_DIR, "tabix_index_vcf.log"),
     wildcard_constraints:
         builder = "vg_from_vcf",
@@ -291,8 +291,8 @@ rule tabix_index_vcf:
     """
 
 rule convert_vcf_gz_to_vcf_bgzf:
-    input: vcf_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.gz"),
-    output: vcf_bgzf = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.bgzf"),
+    input: vcf_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.sgz"),
+    output: vcf_bgzf = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.gz"),
     log: os.path.join(DATASET_BUILDER_DIR, "convert_vcf_gz_to_vcf_bgzf.log"),
     wildcard_constraints:
         builder = "vg_from_vcf",
@@ -301,12 +301,29 @@ rule convert_vcf_gz_to_vcf_bgzf:
     """
 
 rule download_vcf_gz_file:
-    output: vcf_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.gz"),
+    output: vcf_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.sgz"),
     params: url = lambda wildcards: DATASETS[wildcards.dataset]["urls"]["vcf_gz"],
     wildcard_constraints:
         builder = "vg_from_vcf",
     shell: """
         wget --progress=dot:mega -O '{output.vcf_gz}' '{params.url}'
+    """
+
+rule uncompress_vcf_fasta_gz_file:
+    input: fasta_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz"),
+    output: fasta = os.path.join(DATASET_BUILDER_DIR, "dataset.fa"),
+    log: os.path.join(DATASET_BUILDER_DIR, "uncompress_vcf_fasta_gz_file.log"),
+    wildcard_constraints:
+        builder = "vg_from_vcf",
+    shell: """
+        set +e
+        gzip -cd '{input.fasta_gz}' > '{output.fasta}' 2> '{log}'
+        RC=$?
+        set -e
+        if [ $RC -ne 0 ] && [ $RC -ne 2 ]; then
+            echo "[ERR] gzip returned $RC while decompressing {input.fasta_gz}" >&2
+            exit $RC
+        fi
     """
 
 rule download_vcf_fasta_gz_file:
