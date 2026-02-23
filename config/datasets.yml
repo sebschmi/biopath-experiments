@@ -41,17 +41,13 @@ datasets:
     enabled: true
     builder: pggb_from_fasta
     urls:
-      fa_gz: "https://zenodo.org/records/7937947/files/mouse17.chr19.fa.gz?download=1"
-    pggb:
-      extra_opts: ""
+      - "https://zenodo.org/records/7937947/files/mouse17.chr19.fa.gz?download=1"
 
   - name: tomato23_chr2
     enabled: true
     builder: pggb_from_fasta
     urls:
-      fa_gz: "https://zenodo.org/records/7937947/files/tomato23.chr2.fa.gz?download=1"
-    pggb:
-      extra_opts: ""
+      - "https://zenodo.org/records/7937947/files/tomato23.chr2.fa.gz?download=1"
 
   # ---------------------------------------------------------------------------
   # Ultrabubble datasets via vg_from_vcf

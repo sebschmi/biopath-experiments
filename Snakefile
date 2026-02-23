@@ -118,7 +118,7 @@ rule convert_gfa_zst_to_gfa_gz:
     """
 
 rule download_gfa_zst_file:
-    output: dataset = FINISHED_DATASET,
+    output: dataset = ZST_DATASET,
     params: url = lambda wildcards: DATASETS[wildcards.dataset]["urls"][0],
     wildcard_constraints:
         builder = "gfa_zst",
@@ -174,4 +174,78 @@ rule download_gbz_file:
         builder = "gbz",
     shell: """
         wget --progress=dot:mega -O '{output.dataset}' '{params.url}'
+    """
+
+#######################
+### PGGB from FASTA ###
+#######################
+
+rule gzip_pggb_gfa:
+    input: dataset = os.path.join(DATASET_BUILDER_DIR, "dataset.pggb.gfa"),
+    output: dataset = FINISHED_DATASET,
+    log: os.path.join(DATASET_BUILDER_DIR, "gzip_pggb_gfa.log"),
+    wildcard_constraints:
+        builder = "pggb_from_fasta",
+    shell: """
+        gzip -kc '{input.dataset}' > '{output.dataset}' 2> '{log}'
+    """
+
+rule pggb_build:
+    message: "Build pangenome GFA with pggb for {wildcards.dataset}"
+    input:
+        fa_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz"),
+        fai = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz.fai"),
+    output:
+        gfa = os.path.join(DATASET_BUILDER_DIR, "dataset.pggb.gfa"),
+    params:
+        outdir = os.path.join(DATASET_BUILDER_DIR, "pggb_out"),
+    threads: workflow.cores * 0.75
+    log:
+        lambda wildcards, params: os.path.join(params.outdir, "{dataset}.pggb.log"),
+    shell:
+        """
+        mkdir -p '{params.outdir}'
+        pggb -t {threads} -i '{input.fa_gz}' -o '{params.outdir}' > '{log}' 2>&1
+
+        # Sélectionner un GFA produit par pggb
+        out_gfa=""
+        for pat in \
+          "{params.outdir}"/*.smooth.final.gfa \
+          "{params.outdir}"/*/*.smooth.final.gfa \
+          "{params.outdir}"/*.smooth.gfa \
+          "{params.outdir}"/*/*.smooth.gfa \
+          "{params.outdir}"/*.gfa \
+          "{params.outdir}"/*/*.gfa
+        do
+          if [ -f "$pat" ]; then
+            out_gfa="$pat"
+            break
+          fi
+        done
+
+        if [ -z "$out_gfa" ]; then
+          echo "[ERROR] No .gfa produced by pggb in {params.outdir}" >> {log}
+          exit 1
+        fi
+
+        cp "$out_gfa" {output.gfa}
+        """
+
+rule samtools_faidx:
+    input: fasta_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz"),
+    output: fai = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz.fai"),
+    log: os.path.join(DATASET_BUILDER_DIR, "samtools_faidx.log"),
+    wildcard_constraints:
+        builder = "pggb_from_fasta",
+    shell: """
+        samtools faidx '{input.fasta_gz}' > '{log}' 2>&1
+    """
+
+rule download_fasta_gz_file:
+    output: fasta_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz"),
+    params: url = lambda wildcards: DATASETS[wildcards.dataset]["urls"][0],
+    wildcard_constraints:
+        builder = "pggb_from_fasta",
+    shell: """
+        wget --progress=dot:mega -O '{output.fasta_gz}' '{params.url}'
     """
