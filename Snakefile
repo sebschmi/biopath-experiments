@@ -25,7 +25,7 @@ def wildcard_format(str, wildcards):
 # Load config
 with open("config/datasets.yml", "r") as f:
     DATASET_LIST = yaml.safe_load(f)["datasets"]
-    DATASETS = { dataset["name"]: dataset for dataset in DATASET_LIST if dataset["enabled"] and dataset["builder"] in ["gfa_gz", "vg", "gbz"] }
+    DATASETS = { dataset["name"]: dataset for dataset in DATASET_LIST if dataset["enabled"] and dataset["builder"] in ["gfa_gz", "vg", "gbz", "gfa_zst", "vg_from_vcf"] }
 
 
 # Data paths
@@ -260,7 +260,7 @@ rule convert_vcf_vg_to_gfa:
     wildcard_constraints:
         builder = "vg_from_vcf",
     shell: """
-        vg convert -f '{input.dataset}' | gzip > '{output.dataset}' 2> '{log}'
+        vg convert -f '{input}' | gzip > '{output}' 2> '{log}'
     """
 
 rule vg_construct:
