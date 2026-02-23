@@ -1,0 +1,5 @@
+software:
+  biopath:
+    repo: https://github.com/sebschmi/biopath
+    version: 0fecca44c0dfc2996fd47df4f95631ae18527e40
+    compiler: rust

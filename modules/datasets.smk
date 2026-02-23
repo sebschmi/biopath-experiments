@@ -160,7 +160,7 @@ rule pggb_build:
     params:
         outdir = os.path.join(DATASET_BUILDER_DIR, "pggb_out"),
     log: os.path.join(DATASET_BUILDER_DIR, "pggb_out", "{dataset}.pggb.log"),
-    threads: workflow.cores * 0.75
+    threads: workflow.cores * 0.25
     shell:
         """
         mkdir -p '{params.outdir}'

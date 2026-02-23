@@ -42,4 +42,4 @@ ANCIENTDIR = os.path.join(BASEDIR, "ancient")
 TEMPDIR = os.path.join(BASEDIR, "temp")
 
 include: "modules/datasets.smk"
-# include: "modules/software.smk"
+include: "modules/software.smk"
