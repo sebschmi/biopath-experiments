@@ -25,7 +25,7 @@ def wildcard_format(str, wildcards):
 # Load config
 with open("config/datasets.yml", "r") as f:
     DATASET_LIST = yaml.safe_load(f)["datasets"]
-    DATASETS = { dataset["name"]: dataset for dataset in DATASET_LIST if dataset["enabled"] and dataset["builder"] in ["gfa_gz", "vg", "gbz", "gfa_zst", "vg_from_vcf"] }
+    DATASETS = { dataset["name"]: dataset for dataset in DATASET_LIST if dataset["enabled"] }
 
 with open("config/software.yml", "r") as f:
     SOFTWARE_CONFIG = yaml.safe_load(f)["software"]

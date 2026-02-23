@@ -2,7 +2,7 @@
 ### SPQR TREE BUILDING ###
 ##########################
 
-SPQR_TREE = os.path.join(DATADIR, "{dataset}.spqr.gz")
+SPQR_TREE = os.path.join(DATADIR, "{dataset}.spqr")
 
 rule build_spqr_tree:
     input:
@@ -10,6 +10,7 @@ rule build_spqr_tree:
         bubblefinder = BUBBLEFINDER_BINARY,
     output:
         spqr_tree = SPQR_TREE,
+    log: SPQR_TREE + ".log",
     shell: """
-        '{input.bubblefinder}' spqr-tree -g '{input.dataset}' -o '{output.spqr_tree}'
+        '{input.bubblefinder}' spqr-tree -g '{input.dataset}' -o '{output.spqr_tree}' > '{log}' 2>&1
     """

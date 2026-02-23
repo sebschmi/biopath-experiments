@@ -4,6 +4,7 @@
 
 DATASET_STATISTICS_JSON = os.path.join(STATISTICSDIR, "{dataset}", "statistics.json")
 DATASET_STATISTICS_TOML = os.path.join(STATISTICSDIR, "{dataset}", "statistics.toml")
+DATASET_STATISTICS_LOG = os.path.join(STATISTICSDIR, "{dataset}", "statistics.log")
 
 rule all_statistics:
     input:  lambda wildcards: [DATASET_STATISTICS_JSON.format(dataset=dataset) for dataset in DATASETS.keys()],
@@ -16,6 +17,7 @@ rule biopath_statistics:
     output:
         statistics_json = DATASET_STATISTICS_JSON,
         statistics_toml = DATASET_STATISTICS_TOML,
+    log: DATASET_STATISTICS_LOG,
     shell: """
-        '{input.biopath}' statistics --word-size 64 --graph-gfa-in '{input.dataset}' --spqr-in '{input.spqr_tree}' --statistics-json-out '{output.statistics_json}' --statistics-toml-out '{output.statistics_toml}'
+        '{input.biopath}' statistics --word-size 64 --graph-gfa-in '{input.dataset}' --spqr-in '{input.spqr_tree}' --statistics-json-out '{output.statistics_json}' --statistics-toml-out '{output.statistics_toml}' > '{log}' 2>&1
     """

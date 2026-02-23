@@ -151,7 +151,6 @@ rule gzip_pggb_gfa:
     """
 
 rule pggb_build:
-    # message: "Build pangenome GFA with pggb for {wildcards.dataset}"
     input:
         fa_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz"),
         fai = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz.fai"),
@@ -159,12 +158,13 @@ rule pggb_build:
         gfa = os.path.join(DATASET_BUILDER_DIR, "dataset.pggb.gfa"),
     params:
         outdir = os.path.join(DATASET_BUILDER_DIR, "pggb_out"),
+        extra = lambda wildcards: DATASETS[wildcards.dataset].get("pggb", {}).get("extra_opts", ""),
     log: os.path.join(DATASET_BUILDER_DIR, "pggb_out", "{dataset}.pggb.log"),
     threads: workflow.cores * 0.25
     shell:
         """
         mkdir -p '{params.outdir}'
-        pggb -t {threads} -i '{input.fa_gz}' -o '{params.outdir}' > '{log}' 2>&1
+        pggb -t {threads} -i '{input.fa_gz}' -o '{params.outdir}' {params.extra} > '{log}' 2>&1
 
         # Sélectionner un GFA produit par pggb
         out_gfa=""

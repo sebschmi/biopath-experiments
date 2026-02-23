@@ -3,12 +3,12 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - python = 3.13
+  - python
   - snakemake = 9
   - wget
   - vg
   - zstd
   - gzip
   - samtools
-  - pggb
+  - bioconda::pggb
   - rust
