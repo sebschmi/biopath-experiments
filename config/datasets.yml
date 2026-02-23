@@ -20,6 +20,7 @@ datasets:
   # ---------------------------------------------------------------------------
   # pggb precomputed pangenome graphs from Zenodo .gfa.zst
   # ---------------------------------------------------------------------------
+  
   - name: ecoli50
     enabled: true
     builder: gfa_zst
@@ -52,6 +53,7 @@ datasets:
   # ---------------------------------------------------------------------------
   # Ultrabubble datasets via vg_from_vcf
   # ---------------------------------------------------------------------------
+
   - name: Ultrabubble_dataset_chr1
     enabled: true
     builder: vg_from_vcf

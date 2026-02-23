@@ -191,7 +191,7 @@ rule gzip_pggb_gfa:
     """
 
 rule pggb_build:
-    message: "Build pangenome GFA with pggb for {wildcards.dataset}"
+    # message: "Build pangenome GFA with pggb for {wildcards.dataset}"
     input:
         fa_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz"),
         fai = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz.fai"),
@@ -199,9 +199,8 @@ rule pggb_build:
         gfa = os.path.join(DATASET_BUILDER_DIR, "dataset.pggb.gfa"),
     params:
         outdir = os.path.join(DATASET_BUILDER_DIR, "pggb_out"),
+    log: os.path.join(DATASET_BUILDER_DIR, "pggb_out", "{dataset}.pggb.log"),
     threads: workflow.cores * 0.75
-    log:
-        lambda wildcards, params: os.path.join(params.outdir, "{dataset}.pggb.log"),
     shell:
         """
         mkdir -p '{params.outdir}'
@@ -246,6 +245,75 @@ rule download_fasta_gz_file:
     params: url = lambda wildcards: DATASETS[wildcards.dataset]["urls"][0],
     wildcard_constraints:
         builder = "pggb_from_fasta",
+    shell: """
+        wget --progress=dot:mega -O '{output.fasta_gz}' '{params.url}'
+    """
+
+###################
+### VG from VCF ###
+###################
+
+rule convert_vcf_vg_to_gfa:
+    input: os.path.join(DATASET_BUILDER_DIR, "dataset.vg"),
+    output: FINISHED_DATASET,
+    log: os.path.join(DATASET_BUILDER_DIR, "convert_vg_to_gfa.log"),
+    wildcard_constraints:
+        builder = "vg_from_vcf",
+    shell: """
+        vg convert -f '{input.dataset}' | gzip > '{output.dataset}' 2> '{log}'
+    """
+
+rule vg_construct:
+    input:
+        fasta_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz"),
+        vcf_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.bgzf"),
+        vcf_tbi = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.bgzf.tbi"),
+    output: dataset = os.path.join(DATASET_BUILDER_DIR, "dataset.vg"),
+    log: os.path.join(DATASET_BUILDER_DIR, "vg_construct.log"),
+    params:
+        region = lambda wildcards: DATASETS[wildcards.dataset]["vg"]["region"],
+        max_node_length = lambda wildcards: DATASETS[wildcards.dataset]["vg"]["max_node_length"],
+    threads: workflow.cores * 0.75
+    wildcard_constraints:
+        builder = "vg_from_vcf",
+    shell: """
+        vg construct -t {threads} -r '{input.fasta_gz}' -v '{input.vcf_gz}' -R {params.region} -m {params.max_node_length} > '{output.dataset}' 2> '{log}'
+    """
+
+rule tabix_index_vcf:
+    input: vcf_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.bgzf"),
+    output: tbi = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.bgzf.tbi"),
+    log: os.path.join(DATASET_BUILDER_DIR, "tabix_index_vcf.log"),
+    wildcard_constraints:
+        builder = "vg_from_vcf",
+    shell: """
+        tabix -f -p vcf '{input.vcf_gz}' > '{log}' 2>&1
+    """
+
+rule convert_vcf_gz_to_vcf_bgzf:
+    input: vcf_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.gz"),
+    output: vcf_bgzf = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.bgzf"),
+    log: os.path.join(DATASET_BUILDER_DIR, "convert_vcf_gz_to_vcf_bgzf.log"),
+    wildcard_constraints:
+        builder = "vg_from_vcf",
+    shell: """
+        gzip -cd '{input.vcf_gz}' | bgzip -c > '{output.vcf_bgzf}' 2> '{log}'
+    """
+
+rule download_vcf_gz_file:
+    output: vcf_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.vcf.gz"),
+    params: url = lambda wildcards: DATASETS[wildcards.dataset]["urls"]["vcf_gz"],
+    wildcard_constraints:
+        builder = "vg_from_vcf",
+    shell: """
+        wget --progress=dot:mega -O '{output.vcf_gz}' '{params.url}'
+    """
+
+rule download_fasta_gz_file:
+    output: fasta_gz = os.path.join(DATASET_BUILDER_DIR, "dataset.fa.gz"),
+    params: url = lambda wildcards: DATASETS[wildcards.dataset]["urls"]["fa_gz"],
+    wildcard_constraints:
+        builder = "vg_from_vcf",
     shell: """
         wget --progress=dot:mega -O '{output.fasta_gz}' '{params.url}'
     """
