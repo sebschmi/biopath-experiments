@@ -7,3 +7,5 @@ dependencies:
   - snakemake = 9
   - wget
   - vg
+  - zstd
+  - gzip

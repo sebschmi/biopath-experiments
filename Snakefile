@@ -105,6 +105,27 @@ rule download_gfa_gz_file:
         wget --progress=dot:mega -O '{output.dataset}' '{params.url}'
     """
 
+ZST_DATASET = os.path.join(DATASET_BUILDER_DIR, "dataset.gfa.zst")
+
+rule convert_gfa_zst_to_gfa_gz:
+    input: dataset = ZST_DATASET,
+    output: dataset = FINISHED_DATASET,
+    log: os.path.join(DATASET_BUILDER_DIR, "convert_gfa_zst_to_gfa_gz.log"),
+    wildcard_constraints:
+        builder = "gfa_zst",
+    shell: """
+        zstd -d --stdout '{input.dataset}' | gzip > '{output.dataset}' 2> '{log}'
+    """
+
+rule download_gfa_zst_file:
+    output: dataset = FINISHED_DATASET,
+    params: url = lambda wildcards: DATASETS[wildcards.dataset]["urls"][0],
+    wildcard_constraints:
+        builder = "gfa_zst",
+    shell: """
+        wget --progress=dot:mega -O '{output.dataset}' '{params.url}'
+    """
+
 ##########
 ### VG ###
 ##########
