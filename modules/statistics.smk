@@ -9,6 +9,18 @@ DATASET_STATISTICS_LOG = os.path.join(STATISTICSDIR, "{dataset}", "statistics.lo
 rule all_statistics:
     input:  lambda wildcards: [DATASET_STATISTICS_JSON.format(dataset=dataset) for dataset in DATASETS.keys()],
 
+def generate_test_datasets(wildcards):
+    try:
+        template = "random{node_count}_{edge_count}_{ensure_strongly_connected}_{seed}"
+        safe_expand(template, node_count = range(10, 20), edge_count = range(20, 40), ensure_strongly_connected = False)
+    except Exception as e:
+        print(f"Error in generate_test_datasets for dataset {wildcards.dataset}: {e}")
+        traceback.print_exc()
+        raise
+
+rule test_statistics:
+    input:  generate_test_datasets,
+
 rule biopath_statistics:
     input:
         dataset = DATASET,

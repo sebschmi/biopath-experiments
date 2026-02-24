@@ -92,22 +92,22 @@ datasets:
   # Manually built DBGs
   # ---------------------------------------------------------------------------
 
-  # - name: M_xanthus_DBG
-  #   enabled: true
-  #   builder: ggcat_from_fasta
-  #   urls:
-  #     listings:
-  #       - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/012/685/GCA_000012685.1_ASM1268v1/
-  #       - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/278/585/GCA_000278585.2_ASM27858v2/
-  #       - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/340/515/GCA_000340515.1_Myxococcus_xanthus_DZF1/
-  #       - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/400/955/GCA_006400955.1_ASM640095v1/
-  #       - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/401/215/GCA_006401215.1_ASM640121v1/
-  #       - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/401/635/GCA_006401635.1_ASM640163v1/
-  #       - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/402/015/GCA_006402015.1_ASM640201v1/
-  #       - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/402/735/GCA_006402735.1_ASM640273v1/
-  #       - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/402/735/GCA_006402735.1_ASM640273v1/
-  #       - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/900/106/535/GCA_900106535.1_IMG-taxon_2693429903_annotated_assembly/
-  #     origin: https://ftp.ncbi.nlm.nih.gov
-  #     pattern: '.*\.fna\.gz$'
-  #   ggcat:
-  #     k: 41
+  - name: M_xanthus_DBG
+    enabled: false
+    builder: ggcat_from_fasta
+    urls:
+      listings:
+        - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/012/685/GCA_000012685.1_ASM1268v1/
+        - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/278/585/GCA_000278585.2_ASM27858v2/
+        - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/340/515/GCA_000340515.1_Myxococcus_xanthus_DZF1/
+        - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/400/955/GCA_006400955.1_ASM640095v1/
+        - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/401/215/GCA_006401215.1_ASM640121v1/
+        - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/401/635/GCA_006401635.1_ASM640163v1/
+        - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/402/015/GCA_006402015.1_ASM640201v1/
+        - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/402/735/GCA_006402735.1_ASM640273v1/
+        - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/402/735/GCA_006402735.1_ASM640273v1/
+        - https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/900/106/535/GCA_900106535.1_IMG-taxon_2693429903_annotated_assembly/
+      origin: https://ftp.ncbi.nlm.nih.gov
+      pattern: '.*\.fna\.gz$'
+    ggcat:
+      k: 41

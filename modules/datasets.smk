@@ -36,6 +36,9 @@ rule finalize_dataset:
 
 def choose_dataset_builder_fn(wildcards):
     try:
+        if wildcards.dataset.startswith("random"):
+            return safe_format(FINISHED_DATASET, builder="random")
+
         if wildcards.dataset not in DATASETS:
             raise ValueError(f"No enabled dataset found with name {wildcards.dataset}")
         
@@ -293,4 +296,42 @@ rule download_vcf_fasta_gz_file:
         builder = "vg_from_vcf",
     shell: """
         wget --progress=dot:mega -O '{output.fasta_gz}' '{params.url}'
+    """
+
+##############
+### RANDOM ###
+##############
+
+def generate_random_gfa_params(wildcards):
+    try:
+        dataset = wildcards.dataset
+        if not dataset.startswith("random"):
+            raise ValueError(f"Dataset {dataset} does not start with 'random'")
+        dataset = dataset[6:]
+        params = dataset.split("_")
+
+        if len(params) != 4:
+            raise ValueError(f"Dataset {wildcards.dataset} does not have 4 parameters separated by underscores")
+
+        return {
+            "node_count": int(params[0]),
+            "edge_count": int(params[1]),
+            "ensure_strongly_connected": "--ensure-strongly-connected" if params[2].lower() == "true" else "",
+            "seed": int(params[3]),
+        }
+    except Exception as e:
+        print(f"Error in generate_random_gfa_params for dataset {wildcards.dataset}: {e}")
+        traceback.print_exc()
+        raise
+
+rule generate_random_gfa:
+    input:  binary = RANDOM_GFA_GRAPH_GENERATOR_BINARY,
+    output: dataset = FINISHED_DATASET,
+    log:    os.path.join(DATASET_BUILDER_DIR, "generate_random_gfa.log"),
+    params: 
+        p = generate_random_gfa_params,
+    wildcard_constraints:
+        builder = "random",
+    shell: """
+        '{input.binary}' --node-count {params.p[node_count]} --edge-count {params.p[edge_count]} {params.p[ensure_strongly_connected]} --seed {params.p[seed]} | gzip > '{output.dataset}' 2> '{log}'
     """
