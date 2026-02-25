@@ -22,9 +22,9 @@ echo "Arguments: $@" >> "$LOG"
 echo "Start time: $(date +"%FT%R:%S")" >> "$LOG"
 
 if [[ $HOSTNAME == "dx3"* ]]; then
-    echo "Running on dx3, using profile dx3"
+    echo "Running on dx3, using profile dx3" | tee -a "$LOG"
     nohup snakemake --profile profiles/dx3 "$@" >> $LOG 2>&1 &
 else
-    echo "Running on unknown host $HOSTNAME, using default profile"
+    echo "Running on unknown host $HOSTNAME, using default profile" | tee -a "$LOG"
     nohup snakemake "$@" >> $LOG 2>&1 &
 fi

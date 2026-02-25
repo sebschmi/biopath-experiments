@@ -12,7 +12,8 @@ rule all_statistics:
 def generate_test_datasets(wildcards):
     try:
         template = "random{node_count}_{edge_count}_{ensure_strongly_connected}_{seed}"
-        return safe_expand(template, node_count = list(range(10, 20)), edge_count = list(range(20, 40)), ensure_strongly_connected = False, seed = 0)
+        datasets = safe_expand(template, node_count = list(range(10, 20)), edge_count = list(range(20, 40)), ensure_strongly_connected = False, seed = 0)
+        return safe_expand(DATASET_STATISTICS_JSON, dataset = list(datasets))
     except Exception as e:
         print(f"Error in generate_test_datasets for dataset {wildcards.dataset}: {e}")
         traceback.print_exc()
