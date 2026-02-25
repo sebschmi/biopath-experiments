@@ -31,10 +31,11 @@ with open("config/software.yml", "r") as f:
     SOFTWARE_CONFIG = yaml.safe_load(f)["software"]
 
 # Data paths
-BASEDIR = os.getcwd()
+BASEDIR = os.path.join(os.getcwd(), "data")
+print(f"{config}")
 if "datadir" in config:
     BASEDIR = config["datadir"]
-print(f"BASEDIR = {BASEDIR}")
+print(f"BASEDIR = {BASEDIR}", flush=True)
 
 SOFTWAREDIR = os.path.join(BASEDIR, "software")
 DATADIR = os.path.join(BASEDIR, "data")
