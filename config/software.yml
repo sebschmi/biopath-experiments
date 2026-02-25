@@ -9,4 +9,4 @@ software:
 
   random-gfa-graph-generator:
     repo: https://github.com/sebschmi/random-gfa-graph-generator
-    version: 25cf9a2bb4f156bab39fd78ddd69ebb2484fbd29
+    version: a561fdfaca7458bdddd7f1cb1ca74feadc7606d4
