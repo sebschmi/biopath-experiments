@@ -15,13 +15,16 @@ set -e
 
 HOSTNAME=$(hostname)
 LOG="current.log"
+rm -f "$LOG"
 
 echo "Logging to $LOG"
+echo "Arguments: $@" >> "$LOG"
+echo "Start time: $(date +"%FT%R:%S")" >> "$LOG"
 
 if [[ $HOSTNAME == "dx3"* ]]; then
     echo "Running on dx3, using profile dx3"
-    nohup snakemake --profile profiles/dx3 "$@" > $LOG 2>&1 &
+    nohup snakemake --profile profiles/dx3 "$@" >> $LOG 2>&1 &
 else
     echo "Running on unknown host $HOSTNAME, using default profile"
-    nohup snakemake "$@" > $LOG 2>&1 &
+    nohup snakemake "$@" >> $LOG 2>&1 &
 fi
