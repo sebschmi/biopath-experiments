@@ -1,0 +1,4 @@
+software-deployment-method: "conda"
+cores: 16
+config:
+  datadir: "/abga/work/sebschmi/biopath-experiments"
