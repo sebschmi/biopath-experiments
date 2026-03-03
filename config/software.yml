@@ -1,11 +1,11 @@
 software:
   biopath:
     repo: https://github.com/sebschmi/biopath
-    version: 7422f3d6c484073c9d8926fd826c630ec1e5165d
+    version: 62d24cf5e916e3b405973084ee4546ecebe6b0e9
 
   BubbleFinder:
     repo: https://github.com/sebschmi/BubbleFinder
-    version: 47023bc69c5656d0f554c4d0980bf913e6187d06
+    version: 7de4a884fdb50fc933654fa6a44635bb89aea4f9
 
   random-gfa-graph-generator:
     repo: https://github.com/sebschmi/random-gfa-graph-generator
