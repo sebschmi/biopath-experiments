@@ -5,7 +5,7 @@ software:
 
   BubbleFinder:
     repo: https://github.com/sebschmi/BubbleFinder
-    version: 72eb25e88b8d09fa209a076141424259fa778b5b
+    version: 47023bc69c5656d0f554c4d0980bf913e6187d06
 
   random-gfa-graph-generator:
     repo: https://github.com/sebschmi/random-gfa-graph-generator
