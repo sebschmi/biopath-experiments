@@ -12,6 +12,8 @@ BIOPATH_DIR = safe_format(RUST_DIR, software_name = "biopath")
 BIOPATH_BINARY = safe_format(RUST_BINARY, software_name = "biopath")
 BUBBLEFINDER_DIR = os.path.join(SOFTWAREDIR, "BubbleFinder")
 BUBBLEFINDER_BINARY = os.path.join(BUBBLEFINDER_DIR, "build", "BubbleFinder")
+SPQR_RUST_DIR = safe_format(RUST_DIR, software_name = "spqr-rust")
+SPQR_RUST_BINARY = safe_format(RUST_BINARY, software_name = "spqr-rust")
 RANDOM_GFA_GRAPH_GENERATOR_DIR = safe_format(RUST_DIR, software_name = "random-gfa-graph-generator")
 RANDOM_GFA_GRAPH_GENERATOR_BINARY = safe_format(RUST_BINARY, software_name = "random-gfa-graph-generator")
 

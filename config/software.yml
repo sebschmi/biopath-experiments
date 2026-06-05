@@ -7,6 +7,10 @@ software:
     repo: https://github.com/sebschmi/BubbleFinder
     version: 7de4a884fdb50fc933654fa6a44635bb89aea4f9
 
+  spqr-rust:
+    repo: https://github.com/sebschmi/spqr-rust
+    version: 33499d4f6bdd38f4125585e43a20087939b551b4
+
   random-gfa-graph-generator:
     repo: https://github.com/sebschmi/random-gfa-graph-generator
     version: a561fdfaca7458bdddd7f1cb1ca74feadc7606d4
