@@ -1,3 +1,4 @@
 /data
 /.snakemake
 *.log
+nohup.out
