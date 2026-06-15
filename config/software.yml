@@ -1,7 +1,7 @@
 software:
   biopath:
     repo: https://github.com/sebschmi/biopath
-    version: 5615471fb8a4322808e30f216dce0896e805bd59
+    version: 7e4b2f4b1fe96f31c87987ac5b43b3ec7e4e4187
 
   BubbleFinder:
     repo: https://github.com/algbio/BubbleFinder
