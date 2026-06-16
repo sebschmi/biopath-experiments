@@ -45,6 +45,7 @@ STATISTICSDIR = os.path.join(BASEDIR, "statistics")
 
 include: "modules/software.smk"
 include: "modules/datasets.smk"
+include: "modules/random_queries.smk"
 include: "modules/spqr.smk"
 include: "modules/statistics.smk"
 include: "modules/tests.smk"
