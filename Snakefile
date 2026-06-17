@@ -41,11 +41,16 @@ SOFTWAREDIR = os.path.join(BASEDIR, "software")
 DATADIR = os.path.join(BASEDIR, "data")
 ANCIENTDIR = os.path.join(BASEDIR, "ancient")
 TEMPDIR = os.path.join(BASEDIR, "temp")
+INDEXDIR = os.path.join(BASEDIR, "index")
+QUERIESDIR = os.path.join(BASEDIR, "queries")
 STATISTICSDIR = os.path.join(BASEDIR, "statistics")
+BENCHMARKSDIR = os.path.join(BASEDIR, "benchmarks")
 
 include: "modules/software.smk"
 include: "modules/datasets.smk"
 include: "modules/random_queries.smk"
 include: "modules/spqr.smk"
+include: "modules/index.smk"
 include: "modules/statistics.smk"
 include: "modules/tests.smk"
+include: "modules/query_benchmarks.smk"
