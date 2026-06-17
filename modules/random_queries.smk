@@ -11,7 +11,7 @@ rule generate_queries:
         biopath = BIOPATH_BINARY,
     output:
         queries = DATASET_QUERIES,
-    log: DATASET_STATISTICS_LOG,
+    log: DATASET_QUERIES_LOG,
     shell:  """
-        '{input.biopath}' generate-queries --word-size 64 --graph-gfa-in '{input.dataset}' --query-out '{output.queries}' > '{log}' 2>&1
+        '{input.biopath}' generate-random-queries --word-size 64 --graph-gfa-in '{input.dataset}' --query-out '{output.queries}' > '{log}' 2>&1
         """
